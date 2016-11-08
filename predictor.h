@@ -1,6 +1,9 @@
 #ifndef PREDICTOR_H
 #define PREDICTOR_H
 
+#include <stdint.h>
+#include <string.h>
+
 /*
   Define all your tables and their sizes here.
   All tables must be statically-sized.
@@ -14,8 +17,14 @@
   concerned about the memory used by the simulated branch predictor.
 */
 
+#define TLLP_SIZE 512
+#define TLLP_BPT_MAX 127
+#define TLLP_BPT_MID 63
+#define TLLP_9BIT_MAX 0x01ff
+#define TLLP_7BIT_MAX 0x7f
 
-
+uint16_t TLLP_GHT[TLLP_SIZE];
+uint8_t TLLP_BPT[TLLP_SIZE];
 
 /*
   Initialize the predictor.

@@ -1,21 +1,36 @@
 // A very stupid predictor.  It will always predict not taken.
 #include "predictor.h"
 
-uint16_t TLLP_GHT[TLLP_SIZE];
-uint8_t TLLP_BPT[TLLP_SIZE];
+/* Budget specific globals set during init. */
+unsigned int tllp_size;
+unsigned int tllp_bpt_mid;
+unsigned int tllp_bpt_min;
+unsigned int tllp_lht_max;
+unsigned int  tllp_bpt_max;
+
+unsigned int TLLP_LHT[TLLP_SIZE] = {0};
+unsigned int TLLP_BPT[TLLP_SIZE] = {0};
 
 void init_predictor ()
 {
-	memset(TLLP_GHT, 0, sizeof(uint16_t) * TLLP_SIZE);
-	memset(TLLP_BPT, 0x7f, sizeof(uint8_t) * TLLP_SIZE); 
+	tllp_size = TLLP_SIZE;
+	tllp_bpt_mid = TLLP_BPT_MID;
+	tllp_bpt_min = TLLP_BPT_MIN;
+	tllp_lht_max = TLLP_LHT_MAX;
+	tllp_bpt_max = TLLP_BPT_MAX;
+
+	memset(TLLP_LHT, 0, sizeof(unsigned int) * tllp_size);
+	for (int i=0; i<tllp_size;i++) {
+		TLLP_BPT[i] = tllp_bpt_max;
+	}
 }
 
 bool make_prediction (unsigned int pc)
 {
-	uint16_t lsb_addr = (pc & 0x01ff);
-	uint16_t bpt_idx = TLLP_GHT[lsb_addr];
+	unsigned int lsb_addr = (pc & tllp_lht_max);
+	unsigned int bpt_idx = TLLP_LHT[lsb_addr];
 
-	if ((TLLP_BPT[bpt_idx] & 0x7f) > TLLP_BPT_MID) {
+	if (TLLP_BPT[bpt_idx] > tllp_bpt_mid) {
 		return true;
 	} else {
 		return false;
@@ -24,22 +39,22 @@ bool make_prediction (unsigned int pc)
 
 void train_predictor (unsigned int pc, bool outcome)
 {
-	uint16_t lsb_addr = (pc & 0x01ff);
-	uint16_t bpt_idx = TLLP_GHT[lsb_addr];
+	unsigned int lsb_addr = (pc & tllp_lht_max);
+	unsigned int bpt_idx = TLLP_LHT[lsb_addr];
 
 	if (outcome) {
-		if ((TLLP_BPT[bpt_idx] & 0x7f) < TLLP_BPT_MAX) {
+		if (TLLP_BPT[bpt_idx] < tllp_bpt_max) {
 			TLLP_BPT[bpt_idx]++;
 		}
 
-		bpt_idx = ((bpt_idx << 1) | 0x0001);
+		bpt_idx = ((bpt_idx << 1) | 0x01);
 	} else {
-		if ((TLLP_BPT[bpt_idx] & 0x7f) > TLLP_BPT_MIN) {
+		if (TLLP_BPT[bpt_idx] > tllp_bpt_min) {
 			TLLP_BPT[bpt_idx]--;
 		}
 
-		bpt_idx = ((bpt_idx << 1) | 0x0000);
+		bpt_idx = ((bpt_idx << 1) | 0x00);
 	}
 
-	TLLP_GHT[lsb_addr] = bpt_idx;
+	TLLP_LHT[lsb_addr] = (bpt_idx & tllp_lht_max);
 }

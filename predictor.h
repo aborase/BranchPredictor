@@ -17,12 +17,13 @@
   concerned about the memory used by the simulated branch predictor.
 */
 
+/* For budget 8K */
 #define TLLP_SIZE 512
-#define TLLP_BPT_MAX 127
 #define TLLP_BPT_MID 63
 #define TLLP_BPT_MIN 0
-#define TLLP_9BIT_MAX 0x01ff
-#define TLLP_7BIT_MAX 0x7f
+#define TLLP_LHT_MAX 0x000001ff
+#define TLLP_BPT_MAX 0x0000007f
+
 
 /*
   Initialize the predictor.

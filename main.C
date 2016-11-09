@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <stdint.h>
-#include <string.h>
 #include <netinet/in.h>
 #include "traceread.h"
 #include "predictor.h"
@@ -12,7 +10,7 @@ void setup_trace (const char * filename)
   if (filename == NULL)
     stream = stdin;
   else {
-    stream = fopen (filename, "r");
+	stream = fopen (filename, "r");
   }
 }
 

@@ -20,11 +20,9 @@
 #define TLLP_SIZE 512
 #define TLLP_BPT_MAX 127
 #define TLLP_BPT_MID 63
+#define TLLP_BPT_MIN 0
 #define TLLP_9BIT_MAX 0x01ff
 #define TLLP_7BIT_MAX 0x7f
-
-uint16_t TLLP_GHT[TLLP_SIZE];
-uint8_t TLLP_BPT[TLLP_SIZE];
 
 /*
   Initialize the predictor.

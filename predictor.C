@@ -1,13 +1,13 @@
 // A very stupid predictor.  It will always predict not taken.
+#include "predictor.h"
+
+uint16_t TLLP_GHT[TLLP_SIZE];
+uint8_t TLLP_BPT[TLLP_SIZE];
 
 void init_predictor ()
 {
-	for (int i =0; i<TLLP_SIZE;i++){ 
-		TLLP_GHT[i]=0;
-		TLLP_BPT[i]=0x7f;
-	}
-	//memset(TLLP_GHT, 0, sizeof(unsigned int)*TLLP_SIZE);
-	//memset(TLLP_BPT, 0x7f, sizeof(unsigned int)*TLLP_SIZE); 
+	memset(TLLP_GHT, 0, sizeof(uint16_t) * TLLP_SIZE);
+	memset(TLLP_BPT, 0x7f, sizeof(uint8_t) * TLLP_SIZE); 
 }
 
 bool make_prediction (unsigned int pc)

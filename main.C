@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <string.h>
 #include <netinet/in.h>
 #include "traceread.h"
 #include "predictor.h"

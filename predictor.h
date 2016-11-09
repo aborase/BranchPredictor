@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "defs.h"
 
 /*
   Define all your tables and their sizes here.
@@ -18,17 +19,48 @@
 */
 
 /* For budget 8K */
-#define TLLP_SIZE 512
-#define TLLP_BPT_MID 63
-#define TLLP_BPT_MIN 0
-#define TLLP_LHT_MAX 0x000001ff
-#define TLLP_BPT_MAX 0x0000007f
+#define TLLP_SIZE_8K 512
+#define TLLP_BPT_MID_8K 0x0000003f
+#define TLLP_LHT_MAX_8K 0x000001ff
+#define TLLP_BPT_MAX_8K 0x0000007f
 
+/* For budget 16K */
+#define TLLP_SIZE_16K 1024
+#define TLLP_BPT_MID_16K 0x0000001f
+#define TLLP_LHT_MAX_16K 0x000003ff
+#define TLLP_BPT_MAX_16K 0x0000003f
+
+/* For budget 32K */
+#define TLLP_SIZE_32K 2048
+#define TLLP_BPT_MID_32K 0x0000000f
+#define TLLP_LHT_MAX_32K 0x000007ff
+#define TLLP_BPT_MAX_32K 0x0000001f
+
+/* For budget 64K */
+#define TLLP_SIZE_64K 4096
+#define TLLP_BPT_MID_64K 0x00000007
+#define TLLP_LHT_MAX_64K 0x00000fff
+#define TLLP_BPT_MAX_64K 0x0000000f
+
+typedef struct {
+	union {
+		unsigned int b8k[TLLP_SIZE_8K];
+		unsigned int b16k[TLLP_SIZE_16K];
+		unsigned int b32k[TLLP_SIZE_32K];
+		unsigned int b64k[TLLP_SIZE_64K];
+	} lht;
+	union {
+		unsigned int b8k[TLLP_SIZE_8K];
+		unsigned int b16k[TLLP_SIZE_16K];
+		unsigned int b32k[TLLP_SIZE_32K];
+		unsigned int b64k[TLLP_SIZE_64K];	
+	} bpt;
+} tllp_table;
 
 /*
   Initialize the predictor.
 */
-void init_predictor ();
+void init_predictor (budget_size budget);
 
 /*
   Make a prediction for conditional branch instruction at PC 'pc'.

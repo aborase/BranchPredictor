@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <netinet/in.h>
+#include <stdlib.h>
 #include "traceread.h"
 #include "predictor.h"
+#include "defs.h"
 
 FILE * stream;
 
@@ -26,14 +28,32 @@ int main (int argc, char * argv[])
   int num_branches = 0;
   uint32_t pc = 0;
   bool outcome = false;
+  budget_size budget;
+  pred_type pred;
+
+  if (argc != 4) {
+	printf("Usage: predictor <BUDGET_TYPE> <PRED_TYPE> <filename>\n");
+	printf("   where,\n");
+	printf("       BUDGET_TYPE: 1 (for 8K + 64 bits)\n");
+	printf("                    2 (for 16K + 128 bits)\n");
+	printf("                    3 (for 32K + 256 bits)\n");
+	printf("                    4 (for 64K + 512 bits)\n");
+	printf("                    5 (for 128K + 1K bits)\n");
+	printf("                    6 (for 1M + 4K bits)\n");
+	printf("       PRED_TYPE : 1 (for 2-level local predictor)\n");
+	printf("                   2 (for alpha 21264 -like predictor)\n");
+	printf("                   3 (for perceptron predictor)\n");
+	printf("                   4 (for g-share predictor)\n");
+	return 0;
+  } else {
+	budget = (budget_size) atoi(argv[1]);
+	pred = (pred_type) atoi(argv[2]);
+  }
 
   // Initialize the predictor
-  init_predictor ();
+  init_predictor (budget);
 
-  if (argc == 2)
-    setup_trace (argv[1]);
-  else
-    setup_trace (NULL);
+  setup_trace (argv[3]);
 
   // Read the number of instructions from the trace
   uint32_t stat_num_insts = 0;

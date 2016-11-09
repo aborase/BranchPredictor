@@ -4,33 +4,33 @@
 /* Budget specific globals set during init. */
 unsigned int tllp_size;
 unsigned int tllp_bpt_mid;
-unsigned int tllp_bpt_min;
 unsigned int tllp_lht_max;
 unsigned int  tllp_bpt_max;
+unsigned int *tllp_lht;
+unsigned int *tllp_bpt;
+tllp_table tllp;
 
-unsigned int TLLP_LHT[TLLP_SIZE] = {0};
-unsigned int TLLP_BPT[TLLP_SIZE] = {0};
-
-void init_predictor ()
+void init_predictor (budget_size budget)
 {
-	tllp_size = TLLP_SIZE;
-	tllp_bpt_mid = TLLP_BPT_MID;
-	tllp_bpt_min = TLLP_BPT_MIN;
-	tllp_lht_max = TLLP_LHT_MAX;
-	tllp_bpt_max = TLLP_BPT_MAX;
+	tllp_size = TLLP_SIZE_8K;
+	tllp_bpt_mid = TLLP_BPT_MID_8K;
+	tllp_lht_max = TLLP_LHT_MAX_8K;
+	tllp_bpt_max = TLLP_BPT_MAX_8K;
+	tllp_lht = tllp.lht.b8k;
+	tllp_bpt = tllp.bpt.b8k;
 
-	memset(TLLP_LHT, 0, sizeof(unsigned int) * tllp_size);
-	for (int i=0; i<tllp_size;i++) {
-		TLLP_BPT[i] = tllp_bpt_max;
+	memset(tllp.lht.b8k, 0, sizeof(unsigned int) * tllp_size);
+	for (int i = 0; i < tllp_size; i++) {
+		tllp.bpt.b8k[i] = tllp_bpt_max;
 	}
 }
 
 bool make_prediction (unsigned int pc)
 {
 	unsigned int lsb_addr = (pc & tllp_lht_max);
-	unsigned int bpt_idx = TLLP_LHT[lsb_addr];
+	unsigned int bpt_idx = tllp.lht.b8k[lsb_addr];
 
-	if (TLLP_BPT[bpt_idx] > tllp_bpt_mid) {
+	if (tllp.bpt.b8k[bpt_idx] > tllp_bpt_mid) {
 		return true;
 	} else {
 		return false;
@@ -40,21 +40,21 @@ bool make_prediction (unsigned int pc)
 void train_predictor (unsigned int pc, bool outcome)
 {
 	unsigned int lsb_addr = (pc & tllp_lht_max);
-	unsigned int bpt_idx = TLLP_LHT[lsb_addr];
+	unsigned int bpt_idx = tllp.lht.b8k[lsb_addr];
 
 	if (outcome) {
-		if (TLLP_BPT[bpt_idx] < tllp_bpt_max) {
-			TLLP_BPT[bpt_idx]++;
+		if (tllp.bpt.b8k[bpt_idx] < tllp_bpt_max) {
+			tllp.bpt.b8k[bpt_idx]++;
 		}
 
 		bpt_idx = ((bpt_idx << 1) | 0x01);
 	} else {
-		if (TLLP_BPT[bpt_idx] > tllp_bpt_min) {
-			TLLP_BPT[bpt_idx]--;
+		if (tllp.bpt.b8k[bpt_idx] > 0) {
+			tllp.bpt.b8k[bpt_idx]--;
 		}
 
 		bpt_idx = ((bpt_idx << 1) | 0x00);
 	}
 
-	TLLP_LHT[lsb_addr] = (bpt_idx & tllp_lht_max);
+	tllp.lht.b8k[lsb_addr] = (bpt_idx & tllp_lht_max);
 }

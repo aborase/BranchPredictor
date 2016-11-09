@@ -23,4 +23,10 @@ typedef enum {
 	PRED_MAX
 } pred_type;
 
+typedef struct pred_fptr {
+    void (*init_predictor) (budget_size);
+	bool (*make_prediction) (unsigned int);
+	void (*train_predictor) (unsigned int, bool);
+} pred_fptr;
+
 #endif

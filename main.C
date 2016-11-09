@@ -2,7 +2,10 @@
 #include <netinet/in.h>
 #include <stdlib.h>
 #include "traceread.h"
-#include "predictor.h"
+#include "tllp_predictor.h"
+#include "alpha_predictor.h"
+#include "perceptron_predictor.h"
+#include "gshare_predictor.h"
 #include "defs.h"
 
 FILE * stream;
@@ -21,6 +24,38 @@ void close_trace ()
   fclose (stream);
 }
 
+static void set_predictor_fptr (pred_fptr *predfptr, pred_type predtype)
+{
+	switch (predtype) {
+		case TLLP:
+			predfptr->init_predictor = init_tllp_predictor;
+			predfptr->make_prediction = make_tllp_prediction;
+			predfptr->train_predictor = train_tllp_predictor;
+			break;
+
+		case ALPHA21264:
+			predfptr->init_predictor = init_alpha_predictor;
+			predfptr->make_prediction = make_alpha_prediction;
+			predfptr->train_predictor = train_alpha_predictor;
+			break;
+
+		case PERCEPTRON:
+			predfptr->init_predictor = init_perceptron_predictor;
+			predfptr->make_prediction = make_perceptron_prediction;
+			predfptr->train_predictor = train_perceptron_predictor;
+			break;
+
+		case GSHARE:
+			predfptr->init_predictor = init_gshare_predictor;
+			predfptr->make_prediction = make_gshare_prediction;
+			predfptr->train_predictor = train_gshare_predictor;
+			break;
+
+		default:
+			printf("Incorrect predictor type");
+			break;
+	}
+}
 
 int main (int argc, char * argv[])
 {
@@ -29,7 +64,8 @@ int main (int argc, char * argv[])
   uint32_t pc = 0;
   bool outcome = false;
   budget_size budget;
-  pred_type pred;
+  pred_type predtype;
+  pred_fptr predfptr;
 
   if (argc != 4) {
 	printf("Usage: predictor <BUDGET_TYPE> <PRED_TYPE> <filename>\n");
@@ -47,11 +83,14 @@ int main (int argc, char * argv[])
 	return 0;
   } else {
 	budget = (budget_size) atoi(argv[1]);
-	pred = (pred_type) atoi(argv[2]);
+	predtype = (pred_type) atoi(argv[2]);
   }
 
-  // Initialize the predictor
-  init_predictor (budget);
+  /* Set predictor function pointers */
+  set_predictor_fptr (&predfptr, predtype);
+
+  /* Initialize the predictor */
+  predfptr.init_predictor (budget);
 
   setup_trace (argv[3]);
 
@@ -71,11 +110,11 @@ int main (int argc, char * argv[])
     num_branches ++;
     
     // Make a prediction and compare with actual outcome
-    if (make_prediction (pc) != outcome)
+    if (predfptr.make_prediction (pc) != outcome)
       mis_preds ++;
 
     // Train the predictor
-    train_predictor (pc, outcome);
+    predfptr.train_predictor (pc, outcome);
   }
 
   // Print out the mispredict statistics

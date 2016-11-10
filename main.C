@@ -68,18 +68,18 @@ int main (int argc, char * argv[])
   pred_fptr predfptr;
 
   if (argc != 4) {
-	printf("Usage: predictor <BUDGET_TYPE> <PRED_TYPE> <filename>\n");
+	printf("USAGE: predictor <BUDGET_TYPE> <PRED_TYPE> <filename>\n");
 	printf("   where,\n");
-	printf("       BUDGET_TYPE: 1 (for 8K + 64 bits)\n");
+	printf("      BUDGET_TYPE = 1 (for 8K + 64 bits)\n");
 	printf("                    2 (for 16K + 128 bits)\n");
 	printf("                    3 (for 32K + 256 bits)\n");
 	printf("                    4 (for 64K + 512 bits)\n");
 	printf("                    5 (for 128K + 1K bits)\n");
 	printf("                    6 (for 1M + 4K bits)\n");
-	printf("       PRED_TYPE : 1 (for 2-level local predictor)\n");
-	printf("                   2 (for alpha 21264 -like predictor)\n");
-	printf("                   3 (for perceptron predictor)\n");
-	printf("                   4 (for g-share predictor)\n");
+	printf("      PRED_TYPE = 1 (for 2-level local predictor)\n");
+	printf("                  2 (for alpha 21264 -like predictor)\n");
+	printf("                  3 (for perceptron predictor)\n");
+	printf("                  4 (for g-share predictor)\n");
 	return 0;
   } else {
 	budget = (budget_size) atoi(argv[1]);

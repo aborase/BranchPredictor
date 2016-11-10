@@ -14,7 +14,7 @@ do
 	printf "\n\n*******************************\n"
 	printf "*      Predictor Type: $i      *\n"
 	printf "*******************************\n"
-	j=0
+	j=1
 	while [ $j -le $budget_types ]
 	do
 		printf "\n**** Budget: $j ,Predictor: $i and Trace: DIST-INT-1.\n"	

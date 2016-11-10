@@ -21,62 +21,41 @@
 
 /* For budget 8K */
 #define GSHARE_SIZE_8K 2048
-#define GSHARE_GHR_LSB_8K 0x0000003f
-#define GSHARE_ADDR_SZ_8K 5
 #define GSHARE_BPT_IDX_MAX_8K 0x000007ff
 #define GSHARE_BPT_MID_8K 0x00000007
 #define GSHARE_BPT_MAX_8K 0x0000000f
 
 /* For budget 16K */
 #define GSHARE_SIZE_16K 4096
-#define GSHARE_GHR_LSB_16K 0x0000003f
-#define GSHARE_ADDR_SZ_16K 6
 #define GSHARE_BPT_IDX_MAX_16K 0x00000fff
 #define GSHARE_BPT_MID_16K 0x00000007
 #define GSHARE_BPT_MAX_16K 0x0000000f
 
 /* For budget 32K */
 #define GSHARE_SIZE_32K 8192
-#define GSHARE_GHR_LSB_32K 0x0000007f
-#define GSHARE_ADDR_SZ_32K 6
 #define GSHARE_BPT_IDX_MAX_32K 0x00001fff
 #define GSHARE_BPT_MID_32K 0x00000007
 #define GSHARE_BPT_MAX_32K 0x0000000f
 
 /* for budget 64K */
 #define GSHARE_SIZE_64K 16384
-#define GSHARE_GHR_LSB_64K 0x0000007f
-#define GSHARE_ADDR_SZ_64K 7
 #define GSHARE_BPT_IDX_MAX_64K 0x00003fff
 #define GSHARE_BPT_MID_64K 0x00000007
 #define GSHARE_BPT_MAX_64K 0x0000000f
 
 /* For budget 128K */
 #define GSHARE_SIZE_128K 32768
-#define GSHARE_GHR_LSB_128K 0x000000ff
-#define GSHARE_ADDR_SZ_128K 7
 #define GSHARE_BPT_IDX_MAX_128K 0x00007fff
 #define GSHARE_BPT_MID_128K 0x00000007
 #define GSHARE_BPT_MAX_128K 0x0000000f
 
 /* For budget 1M */
 #define GSHARE_SIZE_1M 262144
-#define GSHARE_GHR_LSB_1M 0x000001ff
-#define GSHARE_ADDR_SZ_1M 9
 #define GSHARE_BPT_IDX_MAX_1M 0x0003ffff
 #define GSHARE_BPT_MID_1M 0x00000007
 #define GSHARE_BPT_MAX_1M 0x0000000f
 
 typedef struct {
-/*	union {
-		unsigned int g8k;
-		unsigned int g16k;
-		unsigned int g32k;
-		unsigned int g64k;
-		unsigned int g128k;
-		unsigned int g1m;
-	} ghr;
-*/
 	unsigned int ghr;
 	union {
 		unsigned int b8k[GSHARE_SIZE_8K];

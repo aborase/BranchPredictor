@@ -2,6 +2,8 @@
 #define ALPHA_PREDICTOR_H
 
 #include "defs.h"
+#include "global_predictor.h"
+#include "tllp_predictor.h"
 
 /*
   Define all your tables and their sizes here.
@@ -16,6 +18,53 @@
   concerned about the memory used by the simulated branch predictor.
 */
 
+/* For budget 8K */
+#define ALPHA_CPT_SIZE_8K 512
+#define ALPHA_CPT_IDX_MAX_8K 0x000001ff
+#define ALPHA_CPT_MID_8K 0x00000003
+#define ALPHA_CPT_MAX_8K 0x00000007
+
+/* For budget 16K */
+#define ALPHA_CPT_SIZE_16K 1024
+#define ALPHA_CPT_IDX_MAX_16K 0x000003ff
+#define ALPHA_CPT_MID_16K 0x00000003
+#define ALPHA_CPT_MAX_16K 0x00000007
+
+/* For budget 32K */
+#define ALPHA_CPT_SIZE_32K 2048
+#define ALPHA_CPT_IDX_MAX_32K 0x000007ff
+#define ALPHA_CPT_MID_32K 0x00000003
+#define ALPHA_CPT_MAX_32K 0x00000007
+
+/* for budget 64K */
+#define ALPHA_CPT_SIZE_64K 4096
+#define ALPHA_CPT_IDX_MAX_64K 0x00000fff
+#define ALPHA_CPT_MID_64K 0x00000003
+#define ALPHA_CPT_MAX_64K 0x00000007
+
+/* For budget 128K */
+#define ALPHA_CPT_SIZE_128K 8192
+#define ALPHA_CPT_IDX_MAX_128K 0x00001fff
+#define ALPHA_CPT_MID_128K 0x00000003
+#define ALPHA_CPT_MAX_128K 0x00000007
+
+/* For budget 1M */
+#define ALPHA_CPT_SIZE_1M 65536
+#define ALPHA_CPT_IDX_MAX_1M 0x0000ffff
+#define ALPHA_CPT_MID_1M 0x00000003
+#define ALPHA_CPT_MAX_1M 0x00000007
+
+typedef struct {
+	unsigned int ghr;
+	union {
+		unsigned int c8k[ALPHA_CPT_SIZE_8K];
+		unsigned int c16k[ALPHA_CPT_SIZE_16K];
+		unsigned int c32k[ALPHA_CPT_SIZE_32K];
+		unsigned int c64k[ALPHA_CPT_SIZE_64K];
+		unsigned int c128k[ALPHA_CPT_SIZE_128K];
+		unsigned int c1m[ALPHA_CPT_SIZE_1M];
+	} cpt;
+} alpha_table;
 
 /*
   Initialize the predictor.

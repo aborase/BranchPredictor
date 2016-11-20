@@ -1,6 +1,6 @@
 // A very stupid predictor.  It will always predict not taken.
 #include <stdio.h>
-#include"gshare_predictor.h"
+#include "gshare_predictor.h"
 
 /* Budget specific globals set during init. */
 unsigned int gshare_size;

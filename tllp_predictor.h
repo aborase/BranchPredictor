@@ -18,53 +18,104 @@
   concerned about the memory used by the simulated branch predictor.
 */
 
+/* Table sizes and other constants for the 2-Level Local predictor */
 /* For budget 8K */
-#define TLLP_LHT_SIZE_8K 2048
-#define TLLP_BPT_SIZE_8K 16
+#define TLLP_LHT_SIZE_8K 512 //768 //1024 //2048
+#define TLLP_BPT_SIZE_8K 1024 //512 //128 //16
 #define TLLP_BPT_MID_8K 0x00000003
 #define TLLP_BPT_MAX_8K 0x00000007
-#define TLLP_BPT_IDX_MAX_8K 0x0000000f
-#define TLLP_LHT_IDX_MAX_8K 0x000007ff
+#define TLLP_BPT_IDX_MAX_8K 0x000003ff //0x0000007f //0x0000000f
+#define TLLP_LHT_IDX_MAX_8K 0x000001ff //0x000007ff
 
 /* For budget 16K */
-#define TLLP_LHT_SIZE_16K 4096
-#define TLLP_BPT_SIZE_16K 16
+#define TLLP_LHT_SIZE_16K 1536 //2048 //4096
+#define TLLP_BPT_SIZE_16K 1024 //128 //16
 #define TLLP_BPT_MID_16K 0x00000003
 #define TLLP_BPT_MAX_16K 0x00000007
-#define TLLP_BPT_IDX_MAX_16K 0x0000000f
-#define TLLP_LHT_IDX_MAX_16K 0x00000fff
+#define TLLP_BPT_IDX_MAX_16K 0x000003ff //0x0000007f //0x0000000f
+#define TLLP_LHT_IDX_MAX_16K 0x000007ff //0x00000fff
 
 /* For budget 32K */
-#define TLLP_LHT_SIZE_32K 8192
-#define TLLP_BPT_SIZE_32K 16
+#define TLLP_LHT_SIZE_32K 3072 //4096 //8192
+#define TLLP_BPT_SIZE_32K 2048 //128 //16
 #define TLLP_BPT_MID_32K 0x00000003
 #define TLLP_BPT_MAX_32K 0x00000007
-#define TLLP_BPT_IDX_MAX_32K 0x0000000f
-#define TLLP_LHT_IDX_MAX_32K 0x000001fff
+#define TLLP_BPT_IDX_MAX_32K 0x000007ff //0x0000007f //0x0000000f
+#define TLLP_LHT_IDX_MAX_32K 0x00000fff //0x000001fff
 
 /* for budget 64K */
-#define TLLP_LHT_SIZE_64K 16384
-#define TLLP_BPT_SIZE_64K 16
+#define TLLP_LHT_SIZE_64K 6144 //8192 //16384
+#define TLLP_BPT_SIZE_64K 4096 //128 //16
 #define TLLP_BPT_MID_64K 0x00000003
 #define TLLP_BPT_MAX_64K 0x00000007
-#define TLLP_BPT_IDX_MAX_64K 0x0000000f
-#define TLLP_LHT_IDX_MAX_64K 0x00003fff
+#define TLLP_BPT_IDX_MAX_64K 0x00000fff //0x0000007f //0x0000000f
+#define TLLP_LHT_IDX_MAX_64K 0x00001fff //0x00003fff
 
 /* For budget 128K */
-#define TLLP_LHT_SIZE_128K 32768
-#define TLLP_BPT_SIZE_128K 16
+#define TLLP_LHT_SIZE_128K 12288 //16384 //32768
+#define TLLP_BPT_SIZE_128K 8192 //128 //16
 #define TLLP_BPT_MID_128K 0x00000003
 #define TLLP_BPT_MAX_128K 0x00000007
-#define TLLP_BPT_IDX_MAX_128K 0x0000000f
-#define TLLP_LHT_IDX_MAX_128K 0x00007fff
+#define TLLP_BPT_IDX_MAX_128K 0x00001fff //0x0000007f //0x0000000f
+#define TLLP_LHT_IDX_MAX_128K 0x00003fff //0x00007fff
 
 /* For budget 1M */
-#define TLLP_LHT_SIZE_1M 262144
-#define TLLP_BPT_SIZE_1M 16
+#define TLLP_LHT_SIZE_1M 98304 //131072 //262144
+#define TLLP_BPT_SIZE_1M 65536 //128 //16
 #define TLLP_BPT_MID_1M 0x00000003
 #define TLLP_BPT_MAX_1M 0x00000007
-#define TLLP_BPT_IDX_MAX_1M 0x0000000f
-#define TLLP_LHT_IDX_MAX_1M 0x0003ffff
+#define TLLP_BPT_IDX_MAX_1M 0x0000ffff //0x0000000f
+#define TLLP_LHT_IDX_MAX_1M 0x0001ffff //0x0003ffff
+
+/* Table sizes and other contants for the alpha predictor1 based off 2-level local predictor */
+/* For budget 8K */
+#define TLLP_ALPHA_LHT_SIZE_8K 512
+#define TLLP_ALPHA_BPT_SIZE_8K 256
+#define TLLP_ALPHA_BPT_MID_8K 0x00000003
+#define TLLP_ALPHA_BPT_MAX_8K 0x00000007
+#define TLLP_ALPHA_BPT_IDX_MAX_8K 0x000000ff
+#define TLLP_ALPHA_LHT_IDX_MAX_8K 0x000001ff
+
+/* For budget 16K */
+#define TLLP_ALPHA_LHT_SIZE_16K 1024
+#define TLLP_ALPHA_BPT_SIZE_16K 256
+#define TLLP_ALPHA_BPT_MID_16K 0x00000003
+#define TLLP_ALPHA_BPT_MAX_16K 0x00000007
+#define TLLP_ALPHA_BPT_IDX_MAX_16K 0x000000ff
+#define TLLP_ALPHA_LHT_IDX_MAX_16K 0x000003ff
+
+/* For budget 32K */
+#define TLLP_ALPHA_LHT_SIZE_32K 2048
+#define TLLP_ALPHA_BPT_SIZE_32K 512
+#define TLLP_ALPHA_BPT_MID_32K 0x00000003
+#define TLLP_ALPHA_BPT_MAX_32K 0x00000007
+#define TLLP_ALPHA_BPT_IDX_MAX_32K 0x000001ff
+#define TLLP_ALPHA_LHT_IDX_MAX_32K 0x000007ff
+
+/* for budget 64K */
+#define TLLP_ALPHA_LHT_SIZE_64K 4096
+#define TLLP_ALPHA_BPT_SIZE_64K 512
+#define TLLP_ALPHA_BPT_MID_64K 0x00000003
+#define TLLP_ALPHA_BPT_MAX_64K 0x00000007
+#define TLLP_ALPHA_BPT_IDX_MAX_64K 0x000001ff
+#define TLLP_ALPHA_LHT_IDX_MAX_64K 0x00000fff
+
+/* For budget 128K */
+#define TLLP_ALPHA_LHT_SIZE_128K 8192
+#define TLLP_ALPHA_BPT_SIZE_128K 512
+#define TLLP_ALPHA_BPT_MID_128K 0x00000003
+#define TLLP_ALPHA_BPT_MAX_128K 0x00000007
+#define TLLP_ALPHA_BPT_IDX_MAX_128K 0x000001ff
+#define TLLP_ALPHA_LHT_IDX_MAX_128K 0x00001fff
+
+/* For budget 1M */
+#define TLLP_ALPHA_LHT_SIZE_1M 65536
+#define TLLP_ALPHA_BPT_SIZE_1M 1024
+#define TLLP_ALPHA_BPT_MID_1M 0x00000003
+#define TLLP_ALPHA_BPT_MAX_1M 0x00000007
+#define TLLP_ALPHA_BPT_IDX_MAX_1M 0x000003ff
+#define TLLP_ALPHA_LHT_IDX_MAX_1M 0x0000ffff
+
 
 typedef struct {
 	union {
@@ -89,6 +140,9 @@ typedef struct {
   Initialize the predictor.
 */
 void init_tllp_predictor (budget_size budget);
+
+/* Initialize the predictor for the Alpha tournament predictor */
+void init_tllp_alpha_predictor (budget_size budget);
 
 /*
   Make a prediction for conditional branch instruction at PC 'pc'.

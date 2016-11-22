@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <stdint.h>
 #include <assert.h>
 #include "defs.h"
 
@@ -19,42 +20,41 @@
   concerned about the memory used by the simulated branch predictor.
 */
 
-
 /* For budget 8K */
 #define PERCEPTRON_SIZE_8K 256
 #define PERCEPTRON_PT_IDX_MAX_8K 0x000000ff
 #define PERCEPTRON_WEIGHT_CNT_8K 4
-#define PERCEPTRON_THRESHOLD_8K 128
+#define PERCEPTRON_THRESHOLD_8K 508
 
 /* For budget 16K */
 #define PERCEPTRON_SIZE_16K 256
 #define PERCEPTRON_PT_IDX_MAX_16K 0x000000ff
 #define PERCEPTRON_WEIGHT_CNT_16K 8
-#define PERCEPTRON_THRESHOLD_16K 128
+#define PERCEPTRON_THRESHOLD_16K 1016
 
 /* For budget 32K */
 #define PERCEPTRON_SIZE_32K 512
 #define PERCEPTRON_PT_IDX_MAX_32K 0x000001ff
 #define PERCEPTRON_WEIGHT_CNT_32K 8
-#define PERCEPTRON_THRESHOLD_32K 128
+#define PERCEPTRON_THRESHOLD_32K 1016
 
 /* for budget 64K */
 #define PERCEPTRON_SIZE_64K 512
 #define PERCEPTRON_PT_IDX_MAX_64K 0x000001ff
 #define PERCEPTRON_WEIGHT_CNT_64K 16
-#define PERCEPTRON_THRESHOLD_64K 128
+#define PERCEPTRON_THRESHOLD_64K 2032
 
 /* For budget 128K */
 #define PERCEPTRON_SIZE_128K 1024
 #define PERCEPTRON_PT_IDX_MAX_128K 0x000003ff
 #define PERCEPTRON_WEIGHT_CNT_128K 16
-#define PERCEPTRON_THRESHOLD_128K 128
+#define PERCEPTRON_THRESHOLD_128K 2032
 
 /* For budget 1M */
 #define PERCEPTRON_SIZE_1M 4096
 #define PERCEPTRON_PT_IDX_MAX_1M 0x0000fff
 #define PERCEPTRON_WEIGHT_CNT_1M 32
-#define PERCEPTRON_THRESHOLD_1M 128
+#define PERCEPTRON_THRESHOLD_1M 4064
 
 typedef struct {
 	int weights[PERCEPTRON_WEIGHT_CNT_1M];

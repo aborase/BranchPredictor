@@ -12,6 +12,10 @@ weight_set *perceptron_pt;
 int total_weight;
 perceptron_table perceptron;
 
+static bool sign(int x) {
+	return (x >= 0) ? true : false;
+}
+
 static void perceptron_set_budget_constants(budget_size budget)
 {
 	switch (budget) {
@@ -75,7 +79,7 @@ void init_perceptron_predictor (budget_size budget)
 
 	perceptron.ghr = 0;
 	for (int i = 0; i < perceptron_size; i++) {
-		for(int j = 0; j < perceptron_weight_count; j++) {
+		for (int j = 0; j < perceptron_weight_count; j++) {
 			perceptron_pt[i].weights[j] = 0;
 		}
 	}
@@ -84,18 +88,20 @@ void init_perceptron_predictor (budget_size budget)
 bool make_perceptron_prediction (unsigned int pc)
 {
 	unsigned int pt_idx = (pc & perceptron_pt_idx_max);
+
 	assert(pt_idx <= perceptron_pt_idx_max);
 	total_weight = 0;
 	
-	for (int i = 0; i < perceptron_weight_count-1; i++) {		
-		if ((perceptron.ghr >> i) & (0x01)) {
+	for (int i = 0; i < perceptron_weight_count - 1; i++) {		
+		if ((perceptron.ghr >> i) & 0x01) {
 			total_weight += perceptron_pt[pt_idx].weights[i];
 		} else {
 			total_weight -= perceptron_pt[pt_idx].weights[i];			
 		}
 	}
+
 	total_weight += perceptron_pt[pt_idx].weights[perceptron_weight_count-1];
-	return (total_weight>0) ? true : false;
+	return sign(total_weight);
 }
 
 void train_perceptron_predictor (unsigned int pc, bool outcome)
@@ -103,20 +109,27 @@ void train_perceptron_predictor (unsigned int pc, bool outcome)
 	unsigned int pt_idx = (pc & perceptron_pt_idx_max);
 	assert(pt_idx <= perceptron_pt_idx_max);
 	
-	if (((total_weight > 0) && outcome) || (abs(total_weight) <= perceptron_threshold)) {
-		for (int i = 0; i < perceptron_weight_count-1; i++) {		
-			if (!(outcome)^((perceptron.ghr >> i) & (0x01))) {
-				perceptron_pt[pt_idx].weights[i] += 1;
-			}
-			else {
-				perceptron_pt[pt_idx].weights[i] -= 1;
+	if ((sign(total_weight) != outcome) || (abs(total_weight) <= perceptron_threshold)) {
+		for (int i = 0; i < perceptron_weight_count - 1; i++) {		
+			if (outcome != ((perceptron.ghr >> i) & 0x01)) {
+				if (perceptron_pt[pt_idx].weights[i] > INT8_MIN) { 
+					perceptron_pt[pt_idx].weights[i] -= 1;
+				}
+			} else {
+				if (perceptron_pt[pt_idx].weights[i] < INT8_MAX) {
+					perceptron_pt[pt_idx].weights[i] += 1;
+				}
 			}
 		}
+
 		if (outcome) {
-			perceptron_pt[pt_idx].weights[perceptron_weight_count-1] += 1;
-		}
-		else {
-			perceptron_pt[pt_idx].weights[perceptron_weight_count-1] -= 1;
+			if (perceptron_pt[pt_idx].weights[perceptron_weight_count-1] < INT8_MAX) {
+				perceptron_pt[pt_idx].weights[perceptron_weight_count-1] += 1;
+			}
+		} else {
+			if (perceptron_pt[pt_idx].weights[perceptron_weight_count-1] > INT8_MIN) {
+				perceptron_pt[pt_idx].weights[perceptron_weight_count-1] -= 1;
+			}
 		}
 	}
 }

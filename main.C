@@ -67,11 +67,6 @@ int main (int argc, char * argv[])
   pred_type predtype;
   pred_fptr predfptr;
 
-  resfd = fopen("./pc_res", "a");
-  if (!resfd) {
-     printf("Opening a results file failed \n");
-  }
-
   if (argc != 4) {
 	printf("USAGE: predictor <BUDGET_TYPE> <PRED_TYPE> <filename>\n");
 	printf("   where,\n");

@@ -8,6 +8,8 @@ unsigned int perceptron_size;
 unsigned int perceptron_pt_idx_max;
 unsigned int perceptron_threshold;
 unsigned int perceptron_weight_count;
+int weight_max;
+int weight_min;
 weight_set *perceptron_pt;
 int total_weight;
 perceptron_table perceptron;
@@ -24,6 +26,8 @@ static void perceptron_set_budget_constants(budget_size budget)
 			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_8K;
 			perceptron_threshold = PERCEPTRON_THRESHOLD_8K;
 			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_8K;
+			weight_max = PERCEPTRON_WEIGHT_MAX_8K;
+			weight_min = PERCEPTRON_WEIGHT_MIN_8K;
 			perceptron_pt 	  = perceptron.pt.p8k;
 			break;
 
@@ -32,6 +36,8 @@ static void perceptron_set_budget_constants(budget_size budget)
 			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_16K;
 			perceptron_threshold = PERCEPTRON_THRESHOLD_16K;
 			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_16K;
+			weight_max = PERCEPTRON_WEIGHT_MAX_16K;
+			weight_min = PERCEPTRON_WEIGHT_MIN_16K;
 			perceptron_pt     = perceptron.pt.p16k;
 			break;
 
@@ -40,6 +46,8 @@ static void perceptron_set_budget_constants(budget_size budget)
 			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_32K;
 			perceptron_threshold = PERCEPTRON_THRESHOLD_32K;
 			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_32K;
+			weight_max = PERCEPTRON_WEIGHT_MAX_32K;
+			weight_min = PERCEPTRON_WEIGHT_MIN_32K;
 			perceptron_pt     = perceptron.pt.p32k;
 			break;
 
@@ -48,6 +56,8 @@ static void perceptron_set_budget_constants(budget_size budget)
 			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_64K;
 			perceptron_threshold = PERCEPTRON_THRESHOLD_64K;
 			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_64K;
+			weight_max = PERCEPTRON_WEIGHT_MAX_64K;
+			weight_min = PERCEPTRON_WEIGHT_MIN_64K;
 			perceptron_pt     = perceptron.pt.p64k;
 			break;
 
@@ -56,6 +66,8 @@ static void perceptron_set_budget_constants(budget_size budget)
 			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_128K;
 			perceptron_threshold = PERCEPTRON_THRESHOLD_128K;
 			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_128K;
+			weight_max = PERCEPTRON_WEIGHT_MAX_128K;
+			weight_min = PERCEPTRON_WEIGHT_MIN_128K;
 			perceptron_pt     = perceptron.pt.p128k;
 			break;
 
@@ -64,6 +76,8 @@ static void perceptron_set_budget_constants(budget_size budget)
 			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_1M;
 			perceptron_threshold = PERCEPTRON_THRESHOLD_1M;
 			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_1M;
+			weight_max = PERCEPTRON_WEIGHT_MAX_1M;
+			weight_min = PERCEPTRON_WEIGHT_MIN_1M;
 			perceptron_pt     = perceptron.pt.p1m;
 			break;
 
@@ -87,7 +101,7 @@ void init_perceptron_predictor (budget_size budget)
 
 bool make_perceptron_prediction (unsigned int pc)
 {
-	unsigned int pt_idx = (pc & perceptron_pt_idx_max);
+	unsigned int pt_idx = (pc % perceptron_pt_idx_max);   //XXX
 
 	assert(pt_idx <= perceptron_pt_idx_max);
 	total_weight = 0;
@@ -106,30 +120,36 @@ bool make_perceptron_prediction (unsigned int pc)
 
 void train_perceptron_predictor (unsigned int pc, bool outcome)
 {
-	unsigned int pt_idx = (pc & perceptron_pt_idx_max);
+	unsigned int pt_idx = (pc % perceptron_pt_idx_max);   //XXX
 	assert(pt_idx <= perceptron_pt_idx_max);
 	
 	if ((sign(total_weight) != outcome) || (abs(total_weight) <= perceptron_threshold)) {
 		for (int i = 0; i < perceptron_weight_count - 1; i++) {		
 			if (outcome != ((perceptron.ghr >> i) & 0x01)) {
-				if (perceptron_pt[pt_idx].weights[i] > INT8_MIN) { 
+				if (perceptron_pt[pt_idx].weights[i] > weight_min) { 
 					perceptron_pt[pt_idx].weights[i] -= 1;
 				}
 			} else {
-				if (perceptron_pt[pt_idx].weights[i] < INT8_MAX) {
+				if (perceptron_pt[pt_idx].weights[i] < weight_max) {
 					perceptron_pt[pt_idx].weights[i] += 1;
 				}
 			}
 		}
 
 		if (outcome) {
-			if (perceptron_pt[pt_idx].weights[perceptron_weight_count-1] < INT8_MAX) {
+			if (perceptron_pt[pt_idx].weights[perceptron_weight_count-1] < weight_max) {
 				perceptron_pt[pt_idx].weights[perceptron_weight_count-1] += 1;
 			}
 		} else {
-			if (perceptron_pt[pt_idx].weights[perceptron_weight_count-1] > INT8_MIN) {
+			if (perceptron_pt[pt_idx].weights[perceptron_weight_count-1] > weight_min) {
 				perceptron_pt[pt_idx].weights[perceptron_weight_count-1] -= 1;
 			}
 		}
+	}
+
+	if (outcome) {
+		perceptron.ghr = (perceptron.ghr << 1) | 0x01;
+	} else {
+		perceptron.ghr = (perceptron.ghr << 1) | 0x00;
 	}
 }

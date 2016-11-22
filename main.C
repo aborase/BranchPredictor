@@ -67,6 +67,11 @@ int main (int argc, char * argv[])
   pred_type predtype;
   pred_fptr predfptr;
 
+  resfd = fopen("./pc_res", "a");
+  if (!resfd) {
+     printf("Opening a results file failed \n");
+  }
+
   if (argc != 4) {
 	printf("USAGE: predictor <BUDGET_TYPE> <PRED_TYPE> <filename>\n");
 	printf("   where,\n");
@@ -106,7 +111,6 @@ int main (int argc, char * argv[])
   while (read_branch (&pc, &outcome)) {
 
     pc = ntohl (pc);
-
     num_branches ++;
     
     // Make a prediction and compare with actual outcome
@@ -123,8 +127,6 @@ int main (int argc, char * argv[])
   float mis_pred_rate = (float)mis_preds / float(stat_num_insts / 1000);
   printf ("1000*wrong_cc_predicts/total insts 1000 * %8d / %8d = %7.3f\n", mis_preds, stat_num_insts, mis_pred_rate);
 
-  float pred_percentage = (((float)num_branches - (float)mis_preds)/(float)num_branches) * 100;
-  printf ("Prediction percentage: %7.3f %%\n", pred_percentage);
   if (argc == 2)
     close_trace ();
   

@@ -6,8 +6,8 @@
 /* Budget specific globals set during init. */
 unsigned int perceptron_size;
 unsigned int perceptron_pt_idx_max;
-unsigned int perceptron_threshold
-unsigned int perceptron_weight_count
+unsigned int perceptron_threshold;
+unsigned int perceptron_weight_count;
 int **perceptron_pt;
 int total_weight;
 perceptron_table perceptron;
@@ -20,7 +20,7 @@ static void perceptron_set_budget_constants(budget_size budget)
 			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_8K;
 			perceptron_threshold = PERCEPTRON_THRESHOLD_8K;
 			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_8K;
-			perceptron_pt     = perceptron.pt.p8k;
+			perceptron_pt = perceptron.pt.p8k;
 			break;
 
 		case BUDGET_16K:

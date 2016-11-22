@@ -83,8 +83,8 @@ void init_perceptron_predictor (budget_size budget)
 
 bool make_perceptron_prediction (unsigned int pc)
 {
-	unsigned int pt_idx = (pc & PERCEPTRON_PT_IDX_MAX);
-	assert(pt_idx <= PERCEPTRON_PT_IDX_MAX);
+	unsigned int pt_idx = (pc & perceptron_pt_idx_max);
+	assert(pt_idx <= perceptron_pt_idx_max);
 	total_weight = 0;
 	
 	for(int i = 0; i < perceptron_weight_count-1; i++) {		
@@ -100,8 +100,8 @@ bool make_perceptron_prediction (unsigned int pc)
 
 void train_perceptron_predictor (unsigned int pc, bool outcome)
 {
-	unsigned int pt_idx = (pc & PERCEPTRON_PT_IDX_MAX);
-	assert(pt_idx <= PERCEPTRON_PT_IDX_MAX);
+	unsigned int pt_idx = (pc & perceptron_pt_idx_max);
+	assert(pt_idx <= perceptron_pt_idx_max);
 	
 	if(((total_weight>0) && outcome) || (abs(total_weight)<=perceptron_threshold)) {
 		for(int i = 0; i < perceptron_weight_count-1; i++) {		

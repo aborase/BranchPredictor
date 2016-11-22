@@ -8,7 +8,7 @@ unsigned int perceptron_size;
 unsigned int perceptron_pt_idx_max;
 unsigned int perceptron_threshold;
 unsigned int perceptron_weight_count;
-int **perceptron_pt;
+weight_set *perceptron_pt;
 int total_weight;
 perceptron_table perceptron;
 
@@ -20,7 +20,7 @@ static void perceptron_set_budget_constants(budget_size budget)
 			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_8K;
 			perceptron_threshold = PERCEPTRON_THRESHOLD_8K;
 			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_8K;
-			perceptron_pt = perceptron.pt.p8k;
+			perceptron_pt 	  = perceptron.pt.p8k;
 			break;
 
 		case BUDGET_16K:
@@ -76,7 +76,7 @@ void init_perceptron_predictor (budget_size budget)
 	perceptron.ghr = 0;
 	for (int i = 0; i < perceptron_size; i++) {
 		for(int j = 0; j < perceptron_weight_count; j++) {
-			perceptron_pt[i][j] = 0;
+			perceptron_pt[i].weights[j] = 0;
 		}
 	}
 }
@@ -87,14 +87,14 @@ bool make_perceptron_prediction (unsigned int pc)
 	assert(pt_idx <= perceptron_pt_idx_max);
 	total_weight = 0;
 	
-	for(int i = 0; i < perceptron_weight_count-1; i++) {		
+	for (int i = 0; i < perceptron_weight_count-1; i++) {		
 		if ((perceptron.ghr >> i) & (0x01)) {
-			total_weight += perceptron_pt[pt_idx][i];
+			total_weight += perceptron_pt[pt_idx].weights[i];
 		} else {
-			total_weight -= perceptron_pt[pt_idx][i];			
+			total_weight -= perceptron_pt[pt_idx].weights[i];			
 		}
 	}
-	total_weight += perceptron_pt[pt_idx][perceptron_weight_count-1];
+	total_weight += perceptron_pt[pt_idx].weights[perceptron_weight_count-1];
 	return (total_weight>0) ? true : false;
 }
 
@@ -103,20 +103,20 @@ void train_perceptron_predictor (unsigned int pc, bool outcome)
 	unsigned int pt_idx = (pc & perceptron_pt_idx_max);
 	assert(pt_idx <= perceptron_pt_idx_max);
 	
-	if(((total_weight>0) && outcome) || (abs(total_weight)<=perceptron_threshold)) {
-		for(int i = 0; i < perceptron_weight_count-1; i++) {		
+	if (((total_weight > 0) && outcome) || (abs(total_weight) <= perceptron_threshold)) {
+		for (int i = 0; i < perceptron_weight_count-1; i++) {		
 			if (!(outcome)^((perceptron.ghr >> i) & (0x01))) {
-				perceptron_pt[pt_idx][i] += 1;
+				perceptron_pt[pt_idx].weights[i] += 1;
 			}
 			else {
-				perceptron_pt[pt_idx][i] -= 1;
+				perceptron_pt[pt_idx].weights[i] -= 1;
 			}
 		}
 		if (outcome) {
-			perceptron_pt[pt_idx][perceptron_weight_count-1] += 1;
+			perceptron_pt[pt_idx].weights[perceptron_weight_count-1] += 1;
 		}
 		else {
-			perceptron_pt[pt_idx][perceptron_weight_count-1] -= 1;
+			perceptron_pt[pt_idx].weights[perceptron_weight_count-1] -= 1;
 		}
 	}
 }

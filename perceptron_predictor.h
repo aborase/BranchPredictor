@@ -57,14 +57,18 @@
 #define PERCEPTRON_THRESHOLD_1M 128
 
 typedef struct {
+	int weights[PERCEPTRON_WEIGHT_CNT_1M];
+} weight_set;
+
+typedef struct {
 	unsigned int ghr;
 	union {
-		 int p8k[PERCEPTRON_SIZE_8K][PERCEPTRON_WEIGHT_CNT_8K];
-		 int p16k[PERCEPTRON_SIZE_16K][PERCEPTRON_WEIGHT_CNT_16K];
-		 int p32k[PERCEPTRON_SIZE_32K][PERCEPTRON_WEIGHT_CNT_32K];
-		 int p64k[PERCEPTRON_SIZE_64K][PERCEPTRON_WEIGHT_CNT_64K];
-		 int p128k[PERCEPTRON_SIZE_128K][PERCEPTRON_WEIGHT_CNT_128K];
-		 int p1m[PERCEPTRON_SIZE_1M][PERCEPTRON_WEIGHT_CNT_1M];
+		 weight_set p8k[PERCEPTRON_SIZE_8K];
+		 weight_set p16k[PERCEPTRON_SIZE_16K];
+		 weight_set p32k[PERCEPTRON_SIZE_32K];
+		 weight_set p64k[PERCEPTRON_SIZE_64K];
+		 weight_set p128k[PERCEPTRON_SIZE_128K];
+		 weight_set p1m[PERCEPTRON_SIZE_1M];
 	} pt;
 } perceptron_table;
 

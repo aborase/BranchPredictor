@@ -88,13 +88,13 @@ bool make_perceptron_prediction (unsigned int pc)
 	total_weight = 0;
 	
 	for(int i = 0; i < perceptron_weight_count-1; i++) {		
-		if ((ghr >> i) & (0x01)) {
-			total_weight += perceptron_pt[pt_idx][i]
+		if ((perceptron.ghr >> i) & (0x01)) {
+			total_weight += perceptron_pt[pt_idx][i];
 		} else {
-			total_weight -= perceptron_pt[pt_idx][i]			
+			total_weight -= perceptron_pt[pt_idx][i];			
 		}
 	}
-	total_weight += perceptron_pt[pt_idx][perceptron_weight_count-1]
+	total_weight += perceptron_pt[pt_idx][perceptron_weight_count-1];
 	return (total_weight>0) ? true : false;
 }
 
@@ -105,7 +105,7 @@ void train_perceptron_predictor (unsigned int pc, bool outcome)
 	
 	if(((total_weight>0) && outcome) || (abs(total_weight)<=perceptron_threshold)) {
 		for(int i = 0; i < perceptron_weight_count-1; i++) {		
-			if (!(outcome)^((ghr >> i) & (0x01))) {
+			if (!(outcome)^((perceptron.ghr >> i) & (0x01))) {
 				perceptron_pt[pt_idx][i] += 1;
 			}
 			else {

@@ -107,3 +107,45 @@ void train_perceptron_predictor (unsigned int pc, bool outcome)
 		perceptron.pp = ((perceptron.pp << 1) | 0x00);
 	}
 }
+
+#define SIZE_N 62 //or whatever see section 5.3
+float history[n] = {0}; //Put branch history here, -1 not taken, 1 taken.
+float weight[n] = {0};  //storage for weights
+
+float percepatron(void )
+{
+    int i;
+    float y=0;
+    for (i=0;i<SIZE_N;i++) { y+= weight[i] * history[i];}
+    return y;
+}
+
+void train(float result, float y, float theta) //passed result of last branch (-1 not taken, 1 taken), and perceptron value
+{
+    int i;
+    if ((y<0) != (result<0)) || (abs(y) < theta))
+    {
+     for (i=0;i<SIZE_N;i++;) {
+          weight[i] = weight[i] + result*history[i];
+       }
+    }
+}
+
+float theta = (1.93 * SIZE_N) + 14;
+
+y = percepatron();
+//make prediction:
+if (y < 0) predict_not_taken();
+else predict_taken();
+//get actual result
+result = get_actual_branch_taken_result();//must return -1 not taken, 1 taken
+//train for future predictions
+train(y,result,theta);
+
+//Then you need to shift everything down....
+for (i=1;i<SIZE_N;i++)
+{
+  history[i] = history[i-1];
+  //weight[i] = history[i-1]; //toggle this and see what happens :-)
+}
+history[0] = 1; //weighting - see section 3.2

@@ -1,12 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include"perceptron_predictor.h"
+
 
 /* Budget specific globals set during init. */
 unsigned int perceptron_size;
-unsigned int perceptron_bpt_idx_max;
-unsigned int perceptron_bpt_mid;
-unsigned int perceptron_bpt_max;
-unsigned int *perceptron_bpt;
+unsigned int perceptron_pt_idx_max;
+unsigned int perceptron_threshold
+unsigned int perceptron_weight_count
+int **perceptron_pt;
+int total_weight;
 perceptron_table perceptron;
 
 static void perceptron_set_budget_constants(budget_size budget)
@@ -14,50 +17,50 @@ static void perceptron_set_budget_constants(budget_size budget)
 	switch (budget) {
 		case BUDGET_8K:
 			perceptron_size 	 = PERCEPTRON_SIZE_8K;
-			perceptron_bpt_idx_max = PERCEPTRON_BPT_IDX_MAX_8K;
-			perceptron_bpt_mid = PERCEPTRON_BPT_MID_8K;
-			perceptron_bpt_max = PERCEPTRON_BPT_MAX_8K;
-			perceptron_bpt     = perceptron.bpt.b8k;
+			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_8K;
+			perceptron_threshold = PERCEPTRON_THRESHOLD_8K;
+			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_8K;
+			perceptron_pt     = perceptron.pt.p8k;
 			break;
 
 		case BUDGET_16K:
 			perceptron_size 	 = PERCEPTRON_SIZE_16K;
-			perceptron_bpt_idx_max = PERCEPTRON_BPT_IDX_MAX_16K;
-			perceptron_bpt_mid = PERCEPTRON_BPT_MID_16K;
-			perceptron_bpt_max = PERCEPTRON_BPT_MAX_16K;
-			perceptron_bpt     = perceptron.bpt.b16k;
+			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_16K;
+			perceptron_threshold = PERCEPTRON_THRESHOLD_16K;
+			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_16K;
+			perceptron_pt     = perceptron.pt.p16k;
 			break;
 
 		case BUDGET_32K:
 			perceptron_size 	 = PERCEPTRON_SIZE_32K;
-			perceptron_bpt_idx_max = PERCEPTRON_BPT_IDX_MAX_32K;
-			perceptron_bpt_mid = PERCEPTRON_BPT_MID_32K;
-			perceptron_bpt_max = PERCEPTRON_BPT_MAX_32K;
-			perceptron_bpt     = perceptron.bpt.b32k;
+			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_32K;
+			perceptron_threshold = PERCEPTRON_THRESHOLD_32K;
+			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_32K;
+			perceptron_pt     = perceptron.pt.p32k;
 			break;
 
 		case BUDGET_64K:
 			perceptron_size 	 = PERCEPTRON_SIZE_64K;
-			perceptron_bpt_idx_max = PERCEPTRON_BPT_IDX_MAX_64K;
-			perceptron_bpt_mid = PERCEPTRON_BPT_MID_64K;
-			perceptron_bpt_max = PERCEPTRON_BPT_MAX_64K;
-			perceptron_bpt     = perceptron.bpt.b64k;
+			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_64K;
+			perceptron_threshold = PERCEPTRON_THRESHOLD_64K;
+			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_64K;
+			perceptron_pt     = perceptron.pt.p64k;
 			break;
 
 		case BUDGET_128K:
 			perceptron_size 	 = PERCEPTRON_SIZE_128K;
-			perceptron_bpt_idx_max = PERCEPTRON_BPT_IDX_MAX_128K;
-			perceptron_bpt_mid = PERCEPTRON_BPT_MID_128K;
-			perceptron_bpt_max = PERCEPTRON_BPT_MAX_128K;
-			perceptron_bpt     = perceptron.bpt.b128k;
+			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_128K;
+			perceptron_threshold = PERCEPTRON_THRESHOLD_128K;
+			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_128K;
+			perceptron_pt     = perceptron.pt.p128k;
 			break;
 
 		case BUDGET_1M:
 			perceptron_size 	 = PERCEPTRON_SIZE_1M;
-			perceptron_bpt_idx_max = PERCEPTRON_BPT_IDX_MAX_1M;
-			perceptron_bpt_mid = PERCEPTRON_BPT_MID_1M;
-			perceptron_bpt_max = PERCEPTRON_BPT_MAX_1M;
-			perceptron_bpt     = perceptron.bpt.b1m;
+			perceptron_pt_idx_max = PERCEPTRON_PT_IDX_MAX_1M;
+			perceptron_threshold = PERCEPTRON_THRESHOLD_1M;
+			perceptron_weight_count = PERCEPTRON_WEIGHT_CNT_1M;
+			perceptron_pt     = perceptron.pt.p1m;
 			break;
 
 		default:
@@ -70,40 +73,50 @@ void init_perceptron_predictor (budget_size budget)
 {
 	perceptron_set_budget_constants(budget);	
 
-	perceptron.pp = 0;
+	perceptron.ghr = 0;
 	for (int i = 0; i < perceptron_size; i++) {
-		perceptron_bpt[i] = perceptron_bpt_max;
+		for(int j = 0; j < perceptron_weight_count; j++) {
+			perceptron_pt[i][j] = 0;
+		}
 	}
 }
 
 bool make_perceptron_prediction (unsigned int pc)
 {
-	unsigned int bpt_idx = ((pc ^ perceptron.pp) & perceptron_bpt_idx_max);
-	assert(bpt_idx <= perceptron_bpt_idx_max);
-
-	if (perceptron_bpt[bpt_idx] > perceptron_bpt_mid) {
-		return true;
-	} else {
-		return false;
+	unsigned int pt_idx = (pc & PERCEPTRON_PT_IDX_MAX);
+	assert(pt_idx <= PERCEPTRON_PT_IDX_MAX);
+	total_weight = 0;
+	
+	for(int i = 0; i < perceptron_weight_count-1; i++) {		
+		if ((ghr >> i) & (0x01)) {
+			total_weight += perceptron_pt[pt_idx][i]
+		} else {
+			total_weight -= perceptron_pt[pt_idx][i]			
+		}
 	}
+	total_weight += perceptron_pt[pt_idx][perceptron_weight_count-1]
+	return (total_weight>0) ? true : false;
 }
 
 void train_perceptron_predictor (unsigned int pc, bool outcome)
 {
-	unsigned int bpt_idx = ((pc ^ perceptron.pp) & perceptron_bpt_idx_max);
-	assert(bpt_idx <= perceptron_bpt_idx_max);
-
-	if (outcome) {
-		if (perceptron_bpt[bpt_idx] < perceptron_bpt_max) {
-			perceptron_bpt[bpt_idx]++;
+	unsigned int pt_idx = (pc & PERCEPTRON_PT_IDX_MAX);
+	assert(pt_idx <= PERCEPTRON_PT_IDX_MAX);
+	
+	if(((total_weight>0) && outcome) || (abs(total_weight)<=perceptron_threshold)) {
+		for(int i = 0; i < perceptron_weight_count-1; i++) {		
+			if (!(outcome)^((ghr >> i) & (0x01))) {
+				perceptron_pt[pt_idx][i] += 1;
+			}
+			else {
+				perceptron_pt[pt_idx][i] -= 1;
+			}
 		}
-
-		perceptron.pp = ((perceptron.pp << 1) | 0x01);
-	} else {
-		if (perceptron_bpt[bpt_idx] > 0) {
-			perceptron_bpt[bpt_idx]--;
+		if (outcome) {
+			perceptron_pt[pt_idx][perceptron_weight_count-1] += 1;
 		}
-
-		perceptron.pp = ((perceptron.pp << 1) | 0x00);
+		else {
+			perceptron_pt[pt_idx][perceptron_weight_count-1] -= 1;
+		}
 	}
 }

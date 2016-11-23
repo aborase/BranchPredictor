@@ -68,7 +68,7 @@ int main (int argc, char * argv[])
   pred_fptr predfptr;
 
   if (argc != 4) {
-	printf("USAGE: predictor <BUDGET_TYPE> <PRED_TYPE> <filename>\n");
+	printf("USAGE: predictor <BUDGET_TYPE> <PRED_TYPE> <path-to-trace-file>\n");
 	printf("   where,\n");
 	printf("      BUDGET_TYPE = 1 (for 8K + 64 bits)\n");
 	printf("                    2 (for 16K + 128 bits)\n");

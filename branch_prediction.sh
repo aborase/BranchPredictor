@@ -6,6 +6,8 @@ pred_types=4
 make clean
 make all
 
+./predictor
+
 # 2-level local predictor
 i=1
 j=1

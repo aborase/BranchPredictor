@@ -20,52 +20,52 @@
 
 /* Table sizes and other constants for the 2-Level Local predictor */
 /* For budget 8K */
-#define TLLP_LHT_SIZE_8K 768
+#define TLLP_LHT_SIZE_8K 512
 #define TLLP_BPT_SIZE_8K 512
 #define TLLP_BPT_MID_8K 0x00000003
 #define TLLP_BPT_MAX_8K 0x00000007
 #define TLLP_BPT_IDX_MAX_8K 0x000001ff
-#define TLLP_LHT_IDX_MAX_8K 0x000003ff
+#define TLLP_LHT_IDX_MAX_8K 0x000001ff
 
 /* For budget 16K */
-#define TLLP_LHT_SIZE_16K 1536
+#define TLLP_LHT_SIZE_16K 1024
 #define TLLP_BPT_SIZE_16K 1024
 #define TLLP_BPT_MID_16K 0x00000003
 #define TLLP_BPT_MAX_16K 0x00000007
 #define TLLP_BPT_IDX_MAX_16K 0x000003ff
-#define TLLP_LHT_IDX_MAX_16K 0x000007ff
+#define TLLP_LHT_IDX_MAX_16K 0x000003ff
 
 /* For budget 32K */
-#define TLLP_LHT_SIZE_32K 3072
+#define TLLP_LHT_SIZE_32K 2048
 #define TLLP_BPT_SIZE_32K 2048
 #define TLLP_BPT_MID_32K 0x00000003
 #define TLLP_BPT_MAX_32K 0x00000007
 #define TLLP_BPT_IDX_MAX_32K 0x000007ff
-#define TLLP_LHT_IDX_MAX_32K 0x00000fff
+#define TLLP_LHT_IDX_MAX_32K 0x000007ff
 
 /* for budget 64K */
-#define TLLP_LHT_SIZE_64K 6144
+#define TLLP_LHT_SIZE_64K 4096
 #define TLLP_BPT_SIZE_64K 4096
 #define TLLP_BPT_MID_64K 0x00000003
 #define TLLP_BPT_MAX_64K 0x00000007
 #define TLLP_BPT_IDX_MAX_64K 0x00000fff
-#define TLLP_LHT_IDX_MAX_64K 0x00001fff
+#define TLLP_LHT_IDX_MAX_64K 0x00000fff
 
 /* For budget 128K */
-#define TLLP_LHT_SIZE_128K 12288
+#define TLLP_LHT_SIZE_128K 8192
 #define TLLP_BPT_SIZE_128K 8192
 #define TLLP_BPT_MID_128K 0x00000003
 #define TLLP_BPT_MAX_128K 0x00000007
 #define TLLP_BPT_IDX_MAX_128K 0x00001fff
-#define TLLP_LHT_IDX_MAX_128K 0x00003fff
+#define TLLP_LHT_IDX_MAX_128K 0x00001fff
 
 /* For budget 1M */
-#define TLLP_LHT_SIZE_1M 98304
+#define TLLP_LHT_SIZE_1M 49152
 #define TLLP_BPT_SIZE_1M 65536
 #define TLLP_BPT_MID_1M 0x00000003
 #define TLLP_BPT_MAX_1M 0x00000007
 #define TLLP_BPT_IDX_MAX_1M 0x0000ffff
-#define TLLP_LHT_IDX_MAX_1M 0x0001ffff
+#define TLLP_LHT_IDX_MAX_1M 0x0000ffff
 
 /* Table sizes and other contants for the alpha predictor1 based off 2-level local predictor */
 /* For budget 8K */
